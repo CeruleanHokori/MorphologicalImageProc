@@ -1,6 +1,7 @@
 import cv2 
 import numpy as np
 from matplotlib import pyplot as plt
+import math
 
 #! Remark: Erosion depends on the thickness of the digit
 #! If the digit is too thin, erosion will delete its borders
@@ -9,10 +10,10 @@ def number_of_blobs(filename, plot_result=False):
     eight = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
     (thresh, BWeight) = cv2.threshold(eight, 127, 255, cv2.THRESH_BINARY)
     threshold = 0
-    eight[eight>threshold]=1
+    BWeight[BWeight>threshold]=1
     #Erosion
     kernel = np.ones((2,2),np.uint8)
-    eroded_eight = cv2.erode(eight,kernel,iterations=1)
+    eroded_eight = cv2.erode(BWeight,kernel,iterations=1)
     #Flood filling to find holes
     flooded = eroded_eight.copy()
     mask = np.zeros((flooded.shape[0]+2,flooded.shape[1]+2),np.uint8)
@@ -37,4 +38,5 @@ def number_of_blobs(filename, plot_result=False):
         #plt.imshow(dilated_img,cmap='gray')
         plt.show()
     return len(contour_blobs) -1 #We substract 1 because findContours also detects the background which is white after floodFill
-print(number_of_blobs('./images/thick_zero.png'))
+
+
