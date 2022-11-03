@@ -44,4 +44,31 @@ def square_edge_detector(filename):
     plt.imshow(blank_img,cmap="gray")
     plt.xlabel("Square edges detected")
     plt.show()
-square_edge_detector("./images/empty_square.png")
+
+def detect_plus(filename):
+    #Loading and Thresholding
+    img = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
+    (thresh, BWimg) = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
+    threshold = 0
+    BWimg[BWimg>threshold]=1
+    #Plus kernel
+    plus = cv2.imread("./images/plus.png",cv2.IMREAD_GRAYSCALE)
+    plus[plus>threshold] = 1
+    #Erosion
+    blank = img.copy()
+    blank = cv2.erode(img,plus)
+    res = np.zeros(img.shape,np.uint8)
+    for i in range(blank.shape[1]):
+        for j in range(blank.shape[0]):
+            if blank[i,j] >0:
+                block = img[i-2:i+3,j-2:j+3]
+                res[i-2:i+3,j-2:j+3] = np.logical_and(block,plus)
+    plt.subplot(1,2,1)
+    plt.imshow(img,cmap="gray")
+    plt.xlabel("Original")
+    plt.subplot(1,2,2)
+    plt.imshow(res,cmap="gray")
+    plt.xlabel("Plus detected")
+    plt.show()
+
+detect_plus("./images/motifs.png")
