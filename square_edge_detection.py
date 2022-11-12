@@ -71,4 +71,34 @@ def detect_plus(filename):
     plt.xlabel("Plus detected")
     plt.show()
 
-detect_plus("./images/motifs.png")
+#This procedure will execute detection for test_text.png and letter_e as the detected letter
+#You can change the text image and letter kernel by modifying the next two lines of code
+#Loading and Thresholding
+txt = cv2.imread("./images/test_text.png",cv2.IMREAD_GRAYSCALE)
+letter = cv2.imread("./images/letter_e.png",cv2.IMREAD_GRAYSCALE)
+(thresh, txt) = cv2.threshold(txt, 127, 255, cv2.THRESH_BINARY)
+threshold = 0
+txt[txt>threshold]=1
+txt = 1-txt
+(thresh, letter) = cv2.threshold(letter, 127, 255, cv2.THRESH_BINARY)
+letter[letter>threshold]=1
+letter = 1-letter
+#Dilation
+txt = cv2.dilate(txt,np.ones((2,2),np.uint8))
+#Erosion
+blank = cv2.erode(txt,letter)
+#Location + Logical AND
+res = np.zeros(txt.shape,np.uint8)
+h,w = letter.shape
+for i in range(blank.shape[0]):
+    for j in range(blank.shape[1]):
+        if blank[i,j] >0:
+            block = txt[i-h//2:i+h//2+1,j-w//2:j+w//2+1]
+            res[i-h//2:i+h//2+1,j-w//2:j+w//2+1] = np.logical_and(block,letter)
+plt.subplot(1,2,1)
+plt.imshow(txt,cmap="gray")
+plt.xlabel("Original text")
+plt.subplot(1,2,2)
+plt.imshow(res,cmap="gray")
+plt.xlabel("Detected letter e")
+plt.show()

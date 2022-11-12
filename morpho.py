@@ -104,3 +104,13 @@ def decide(filename):
     else: #[1,3,4,5,7]
         lines = line_type(line(filename))
         return [1,3,4,5,7]
+
+
+#Uncomment the following line and execute one of the desired operations
+# Filename = ""
+
+#Execute the decision tree
+#print(decide(Filename))
+
+#Execute the following line to count the number of blobs
+#number_of_blobs(Filename,plot_result=True)
